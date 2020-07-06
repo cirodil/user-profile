@@ -1,36 +1,32 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import Login from '../views/Login.vue'
-import User from '../views/User.vue'
-import store from '../store'
+import Vue from "vue";
+import VueRouter from "vue-router";
+import Login from "../views/Login.vue";
+import User from "../views/User.vue";
+import store from "../store";
 
+Vue.use(VueRouter);
 
-Vue.use(VueRouter)
-
-  const routes = [
+const routes = [
   {
-    path: '/',
-    name: 'Login',
-    component: Login
+    path: "/login",
+    name: "login",
+    component: Login,
   },
-
   {
-    path: '/user',
-    name: 'User',
-    component: () => import('../views/User.vue')
+    path: "/user",
+    name: "user",
+    component: User,
+    beforeEnter: ((to, from, next) => {
+      if (store.state.isLoggedIn) {
+        return next();
+      }
+      return next({ name: 'login' })
+    }),
   },
-]
-
-
+];
 
 const router = new VueRouter({
-  mode: 'history',
-  base: process.env.BASE_URL,
-  routes
-})
-
-router.beforeEach((to, from, next) => {
-  if (to.name !== 'Login' && store.state.loggedUserEmail === null ) next({name: 'Login'})
-  else next();
+  routes,
 });
-export default router
+
+export default router;

@@ -1,28 +1,61 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import Vue from "vue";
+import Vuex from "vuex";
+import users from "./usersStub";
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-   users: [
-     {id: 1, name: 'Ivan', email: 'ivanov@mail.ru', password: '12345678', isAuth: false, imgSrc: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Elon_Musk_Royal_Society.jpg/266px-Elon_Musk_Royal_Society.jpg'}
-   ],
-   loggedUserEmail: null 
+    user: null,
+    isLoggedIn: false,
+    error: null,
   },
   getters: {
-    getUserByEmail: state => email => {
-      return state.users.find(user => user.email === email)
+    getUserByEmail: (state) => (email) => {
+      return state.users.find((user) => user.email === email);
     },
-    getUserByPassword: state => password => {
-      return state.users.find(user => user.password === password)
-    }
   },
   mutations: {
-    setLoggedUserEmail (state, payload) {
-      state.loggedUserEmail = payload
-    }
+    setLoggedIn(state, isLoggedIn) {
+      state.isLoggedIn = isLoggedIn;
+    },
+    setUser(state, user) {
+      state.user = user;
+    },
+    setError(state, error) {
+      state.error = error;
+    },
+    clearError(state) {
+      state.error = null;
+    },
+    clearState(state) {
+      state.user = null;
+      state.isLoggedIn = false;
+      state.error = null;
+    },
   },
-  modules: {
-  }
-})
+  actions: {
+    login({ commit }, { email, password }) {
+      commit("clearError")
+      try {
+        const user = users.find((u) => u.email === email);
+        if (!user) {
+          throw Error("User not found");
+        }
+
+        if (user.password !== password) {
+          throw Error("Invalid password");
+        }
+
+        commit("setUser", user);
+        commit("setLoggedIn", true);
+      } catch (e) {
+        commit("setError", e.message);
+      }
+    },
+    logout({ commit }) {
+      commit("clearState");
+    },
+  },
+  modules: {},
+});
