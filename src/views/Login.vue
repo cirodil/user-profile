@@ -35,7 +35,7 @@ export default {
     email: null,
     password: null,
     isValid: true,
-    isAlert: false
+    isAlert: false,
   }),
   methods: {
     submitHandler() {
@@ -44,10 +44,11 @@ export default {
         password: this.password
       };
       if (
-        formData.email == this.$store.state.users[0].email &&
-        formData.password == this.$store.state.users[0].password
+        formData.email == this.$store.getters.getUserByEmail(formData.email).email &&
+        formData.password == this.$store.getters.getUserByEmail(formData.email).password
       ) {
         this.$router.push("/user");
+        this.$store.commit('setLoggedUserEmail', formData.email);
       } else {
         this.isAlert = !this.isAlert
         setTimeout(() => {this.isAlert = !this.isAlert}, 500) 

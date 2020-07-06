@@ -2,9 +2,9 @@
   <v-app>
     <v-card class="mx-auto" max-width="400">
       <v-card-title>User profile</v-card-title>
-      <v-img :src="users[0].imgSrc"></v-img>
-      <v-card-title>{{users[0].name}}</v-card-title>
-      <v-card-text>{{users[0].email}}</v-card-text>
+      <v-img :src="user.imgSrc"></v-img>
+      <v-card-title>{{user.name}}</v-card-title>
+      <v-card-text>{{user.email}}</v-card-text>
       <v-card-actions>
         <v-btn color="primary" @click="logout">Logout</v-btn>
       </v-card-actions>
@@ -14,14 +14,16 @@
 
 <script>
 export default {
-  name: "user",
+  props: ['prop'],
+  name: "user", 
   computed: {
-    users() {
-      return this.$store.state.users;
+    user() {
+      return this.$store.getters.getUserByEmail(this.$store.state.loggedUserEmail);
     }
   },
   methods: {
     logout () {
+      this.$store.commit('setLoggedUserEmail', null);
       this.$router.push("/");
     }
   }
